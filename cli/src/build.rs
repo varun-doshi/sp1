@@ -24,7 +24,10 @@ pub(crate) struct BuildArgs {
 
 pub fn build_program(args: &BuildArgs) -> Result<Utf8PathBuf> {
     let metadata_cmd = cargo_metadata::MetadataCommand::new();
-    let metadata = metadata_cmd.exec().unwrap();
+    let metadata = metadata_cmd.exec().unwrap_or_else(|e|{
+        eprintln!("error: {}",e);
+        exit(1);
+    });
     let root_package = metadata.root_package();
     let root_package_name = root_package.as_ref().map(|p| &p.name);
 
